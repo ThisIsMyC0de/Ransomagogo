@@ -1,9 +1,9 @@
+import os
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
-import os
 
 def generate_rsa_keys():
     private_key = rsa.generate_private_key(
@@ -24,17 +24,22 @@ def generate_rsa_keys():
         format=serialization.PublicFormat.SubjectPublicKeyInfo
     )
 
-    with open('keys/private_key.pem', 'wb') as private_file:
+    # Créer le dossier 'keys' s'il n'existe pas
+    keys_dir = 'keys'
+    if not os.path.exists(keys_dir):
+        os.makedirs(keys_dir)
+
+    with open(os.path.join(keys_dir, 'private_key.pem'), 'wb') as private_file:
         private_file.write(private_pem)
 
-    with open('keys/public_key.pem', 'wb') as public_file:
+    with open(os.path.join(keys_dir, 'public_key.pem'), 'wb') as public_file:
         public_file.write(public_pem)
 
     return private_key, public_key
 
 def generate_symmetric_key():
     symmetric_key = os.urandom(32)
-    with open('keys/symmetric_key.bin', 'wb') as key_file:
+    with open(os.path.join('keys', 'symmetric_key.bin'), 'wb') as key_file:
         key_file.write(symmetric_key)
     return symmetric_key
 
