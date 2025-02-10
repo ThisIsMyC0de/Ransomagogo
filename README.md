@@ -12,13 +12,13 @@ Ce projet est un ransomware pédagogique destiné à sensibiliser les utilisateu
    cd Ransomagogo
 
 2. Installez les dépendances :
-   pip install -r requirements.txt
+   pip3 install -r requirements.txt
 
 3. Générez les clés RSA et la clé symétrique :
-   python generate_keys.py
+   python3 generate_keys.py
 
 4. Lancez le serveur :
-   python server/app.py
+   python3 server/app.py
 
 5. Convertissez le client en exécutable :
    pyinstaller --onefile client/main.py
