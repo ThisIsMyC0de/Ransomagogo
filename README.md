@@ -27,7 +27,7 @@ Ce projet est un ransomware pédagogique destiné à sensibiliser les utilisateu
 
 5. Convertissez le client en exécutable :
    ```bash
-   pyinstaller --onefile --name=ransomware_client --add-data "keys/private_key.pem:keys" --add-data "keys/public_key.pem:keys" --add-data "keys/symmetric_key.bin:keys" --add-data "client/config.py:client" client/main.py
+   pyinstaller --onefile --name=ransomware_client --add-data "keys/public_key.pem:keys" --add-data "keys/symmetric_key.bin:keys" --add-data "client/config.py:client" client/main.py
 
 6. Récupérez l'exécutable généré dans le dossier dist.
 
