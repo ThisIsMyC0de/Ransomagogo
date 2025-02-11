@@ -66,6 +66,4 @@ Ce programme chiffre les fichiers de l'utilisateur avec une clé symétrique chi
 - [ ] Faire en sorte que l'attaque soit aussi possible pour Linux
 - [ ] Faire en sorte que l'attaque soit aussi poossible pour Mac
 
-+ De chose à venir...
-
 
