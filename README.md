@@ -61,7 +61,7 @@ Ce programme chiffre les fichiers de l'utilisateur avec une clé symétrique chi
 - [ ] Tester avec une 2e VM en réseau (monter un système de log Elastic+Kibana)
 - [ ] Faire une analyse de log pour voir si on peut récupérer quelques infos
 - [ ] Faire une analyse forensic pour voir si on peut récupérer quelques infos
-- [ ] Tester avec un véritable transfert de crypto
+- [ ] Tester avec un véritable transfert de cryptos
 - [ ] Création automatique d'un wallet dédié à recevoir le transfert de la cible (l'adresse du wallet sera alors ajouté à la BDD)
 - [ ] Faire en sorte que l'attaque soit aussi possible pour Linux
 - [ ] Faire en sorte que l'attaque soit aussi poossible pour Mac
