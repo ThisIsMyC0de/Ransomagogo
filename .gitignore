@@ -1,0 +1,9 @@
+# Ignorer les fichiers générés par l'exécution de ransomagogo.py
+keys/
+example.txt
+__pycache__/
+
+# Ignorer les fichiers générés par PyInstaller
+dist/
+build/
+*.spec

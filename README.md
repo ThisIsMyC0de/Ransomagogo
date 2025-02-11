@@ -2,11 +2,15 @@
 
 ## Description
 
-Ce projet est un ransomware pédagogique destiné à sensibiliser les utilisateurs aux dangers des ransomwares. Il chiffre les fichiers de l'utilisateur avec une clé symétrique chiffrée par une clé publique RSA. Le déchiffrement nécessite une requête à un serveur distant pour obtenir la clé privée.
+> ⚠️ Important : Ce projet est un ransomware pédagogique destiné à sensibiliser les utilisateurs aux dangers des ransomwares. Nous insistons sur le fait que c'est un outil de prévention à but éducatif et que nous ne seront pas tenus comme responsable de son utilisation à des fins malveillantes.
+
+Ce programme chiffre les fichiers de l'utilisateur avec une clé symétrique chiffrée par une clé publique RSA. Le déchiffrement nécessite l'envoi d'une requête à un serveur distant pour obtenir la clé privée. Cette clé privée est alors utilisée pour déchiffrer la clé symétrique qui permet de récupérer les fichiers chiffrés par le ransomware.
 
 ## Installation
 
-> ⚠️ Attention : ces instructions sont valables pour windows uniquement. En effet, le ransoware ciblant des victimes sous windows, le code doit être compilé sur le même OS (possibilité d'utiliser une VM si vous êtes sous linux).
+> ⚠️ Attention : ces instructions sont valables pour windows uniquement. En effet, le ransoware ciblant des victimes sous windows, le code doit être compilé sur le même OS (possibilité d'utiliser une VM si vous êtes sous linux). Des modifications seront peut-être apportées plus tard pour régler ce problème de manière transparente.
+
+> ⚠️ A noter : Pour l'instant le Ransomware est détecté par Windows Defender. Pensez donc bien à désactiver votre antivirus le temps que des modifications soient apportées pour les bypasser.
 
 1. Clonez le dépôt :
    ```bash
@@ -17,22 +21,18 @@ Ce projet est un ransomware pédagogique destiné à sensibiliser les utilisateu
    ```bash
    pip install -r requirements.txt
 
-3. Générez les clés RSA et la clé symétrique :
-   ```bash
-   python generate_keys.py
-
-4. Lancez le serveur :
-   ```bash
-   python server/app.py
-
-5. Convertissez le client en exécutable :
-   ```bash
-   pyinstaller --onefile --name=ransomware_client --add-data "keys/public_key.pem:keys" --add-data "keys/symmetric_key.bin:keys" --add-data "client/config.py:client" client/main.py
-
-6. Récupérez l'exécutable généré dans le dossier dist.
-
 ## Utilisation
 
-    Lancez le client sur la machine de la victime.
-    Cliquez sur "Afficher le message de rançon" pour voir le message.
-    Cliquez sur "Payer la rançon" pour envoyer une requête au serveur et déchiffrer les fichiers.
+1. Lancez le script ransomagogo.py :
+   ```bash
+   python ransomagogo.py
+
+2. Suivez les instructions pour modifier l'adresse ip et le port du serveur. 
+
+3. Récupérez l'exécutable du client généré dans le dossier dist.
+
+4. Lancez le client sur la machine de la victime.
+
+5. Cliquez sur "Afficher le message de rançon" pour voir le message.
+
+6. Cliquez sur "Payer la rançon" pour envoyer une requête au serveur et déchiffrer les fichiers.

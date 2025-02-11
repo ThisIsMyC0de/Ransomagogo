@@ -2,3 +2,5 @@ flask
 cryptography
 requests
 pyinstaller
+tqdm
+colorama

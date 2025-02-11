@@ -33,7 +33,6 @@ def get_private_key():
         return jsonify({'error': 'Paiement non effectué'}), 400
 
 def signal_handler(sig, frame):
-    print('Arrêt du serveur...')
     stop_event.set()
     sys.exit(0)
 
