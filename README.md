@@ -39,13 +39,13 @@ Ce programme chiffre les fichiers de l'utilisateur avec une clé symétrique chi
 
 ## To Do List
 
-[x] Génération des clés
-[x] Client + Serveur 
-[x] Faire un script d'automatisation
-[ ] Ajout de l'UI propre
-[ ] Changement du Wallpaper
-[ ] Bypass de Windows Defender
-[ ] Ajout BDD côté serveur avec clés générées, MAC de la victime (requête à récupérer pour l'avoir), date d'infection, + d'autres infos
+- [x] Génération des clés
+- [x] Client + Serveur 
+- [x] Faire un script d'automatisation
+- [ ] Ajout de l'UI propre
+- [ ] Changement du Wallpaper
+- [ ] Bypass de Windows Defender
+- [ ] Ajout BDD côté serveur avec clés générées, MAC de la victime (requête à récupérer pour l'avoir), date d'infection, + d'autres infos
 
 + De chose à venir...
 
