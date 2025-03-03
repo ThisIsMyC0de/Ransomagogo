@@ -43,6 +43,7 @@ Ce programme chiffre les fichiers de l'utilisateur avec une clé symétrique chi
 - [x] Client + Serveur 
 - [x] Faire un script d'automatisation
 - [ ] Ajout de l'UI propre
+- [ ] Commenter le code
 - [ ] Changement du Wallpaper
 - [ ] Bypass de Windows Defender
 - [ ] Ajout BDD côté serveur avec clés générées, MAC de la victime (requête à récupérer pour l'avoir), date d'infection, + d'autres infos
@@ -53,6 +54,8 @@ Ce programme chiffre les fichiers de l'utilisateur avec une clé symétrique chi
 - [ ] Faire en sorte que le client s'autodétruise si la communication avec le serveur ne se fait pas ou au bout des 3 jours ou après le paiement et déchiffrement de tous les fichiers
 - [ ] Faire en sorte qu'il soit très difficilement supprimable d'ici là (Faire peut-être des copies à certains endroits. Screenlocker, persistance, utilisation du registre, chargement du ransomware à la place du bureau)
 - [ ] Utiliser Https sur le port 443 en priorité puis http sur le port 80 (pour passer les firewalls)
+- [ ] Ajout d'un bruteforce pour trouver un port ouvert sur lequel communiquer
+- [ ] Ajouter le choix du vecteur à l'utilisateur
 - [ ] Obfusquer le code (ex : utiliser une somme de variable pour stocker la clé symétrique en mémoire, utiliser des encodage particuliers)
 - [ ] Opsec et obfuscation des adresses ip (pas trop d'idées de comment faire, adressage dynamique ?, en gros essayer d'anonymiser au maximum niveau réseau)
 - [ ] Faire de l'élévation de privilèges si le Ransomware n'est pas exécuté avec les droits admin
