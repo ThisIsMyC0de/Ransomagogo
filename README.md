@@ -43,11 +43,14 @@ Ce programme chiffre les fichiers de l'utilisateur avec une clé symétrique chi
 - [x] Client + Serveur 
 - [x] Faire un script d'automatisation
 - [ ] Ajout de l'UI propre
+- [ ] Changer la méthode utilisée : la clé privé reste sur le serveur, on ne donne que la clé symétrique déchiffrée
+- [ ] Indiquer à l'utilisateur si son PC n'arrive pas à joindre le serveur (problème de connexion = impossibilité de recevoir la clé)
 - [ ] Commenter le code
 - [ ] Changement du Wallpaper
 - [ ] Bypass de Windows Defender
+- [ ] Persistance en ajoutant le programme aux programmes lancés lors du démarrage
 - [ ] Ajout BDD côté serveur avec clés générées, MAC de la victime (requête à récupérer pour l'avoir), date d'infection, + d'autres infos
-- [ ] Automatisater les requêtes entre le serveur et la base (Pour que la base s'update automatiquement à la création des clés, à la récupération de l'adresse MAC et de la date d'infection)
+- [ ] Automatiser les requêtes entre le serveur et la base (Pour que la base s'update automatiquement à la création des clés, à la récupération de l'adresse MAC et de la date d'infection)
 - [ ] Trouver une solution pour générer l'exécutable pour Windows même si l'on est sous Linux (peut-être avec un conteneur ou wine)
 - [ ] Ajout du timer
 - [ ] Synchro du temps avec un ntp
@@ -60,7 +63,7 @@ Ce programme chiffre les fichiers de l'utilisateur avec une clé symétrique chi
 - [ ] Opsec et obfuscation des adresses ip (pas trop d'idées de comment faire, adressage dynamique ?, en gros essayer d'anonymiser au maximum niveau réseau)
 - [ ] Faire de l'élévation de privilèges si le Ransomware n'est pas exécuté avec les droits admin
 - [ ] Tester avec un firewall pfsense entre les 2 machines et voir si on peut le bypass
-- [ ] Voir si on peut le propager sur le réseau
+- [ ] Voir si on peut le propager sur le réseau (eternal blue comme wannacry)
 - [ ] Tester avec une 2e VM en réseau (monter un système de log Elastic+Kibana)
 - [ ] Faire une analyse de log pour voir si on peut récupérer quelques infos
 - [ ] Faire une analyse forensic pour voir si on peut récupérer quelques infos
