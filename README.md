@@ -42,7 +42,7 @@ Ce programme chiffre les fichiers de l'utilisateur avec une clé symétrique chi
 - [x] Génération des clés
 - [x] Client + Serveur 
 - [x] Faire un script d'automatisation
-- [ ] Ajout de l'UI propre
+- [x] Ajout de l'UI propre
 - [ ] Changer la méthode utilisée : la clé privé reste sur le serveur, on ne donne que la clé symétrique déchiffrée
 - [ ] Indiquer à l'utilisateur si son PC n'arrive pas à joindre le serveur (problème de connexion = impossibilité de recevoir la clé)
 - [ ] Commenter le code
