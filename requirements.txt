@@ -4,3 +4,4 @@ requests
 pyinstaller
 tqdm
 colorama
+configparser

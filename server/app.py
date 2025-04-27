@@ -4,12 +4,24 @@ import socket
 import threading
 from cryptography.hazmat.primitives import serialization
 import signal
+import os
 import sys
+import configparser
+# Ajouter le répertoire parent au chemin de recherche des modules
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(parent_dir)
+from utils import resource_path
 
 app = Flask(__name__)
 
 private_key = load_private_key()
 stop_event = threading.Event()
+
+def load_config():
+    config_path = resource_path('server/config.ini')
+    config = configparser.ConfigParser()
+    config.read(config_path)
+    return config
 
 def broadcast_server():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -37,9 +49,13 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 if __name__ == '__main__':
+    # Charger la configuration
+    config = load_config()
+    local_port = int(config['SERVER']['local_port'])
+
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
     broadcast_thread = threading.Thread(target=broadcast_server)
     broadcast_thread.start()
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=local_port)
     broadcast_thread.join()  # Attendre que le thread de broadcast se termine
