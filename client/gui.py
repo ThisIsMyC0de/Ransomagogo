@@ -11,9 +11,6 @@ parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
 from utils import resource_path
 import requests
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives import serialization, hashes
-from cryptography.hazmat.backends import default_backend
 from decryption import decrypt_file
 import socket
 import threading

@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from keys import load_private_key
 import socket
 import threading
-from cryptography.hazmat.primitives import serialization, hashes
+from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 import signal
 import os
