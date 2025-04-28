@@ -43,8 +43,8 @@ Ce programme chiffre les fichiers de l'utilisateur avec une clé symétrique chi
 - [x] Client + Serveur 
 - [x] Faire un script d'automatisation
 - [x] Ajout de l'UI propre
-- [ ] Changer la méthode utilisée : la clé privé reste sur le serveur, on ne donne que la clé symétrique déchiffrée
-- [ ] Indiquer à l'utilisateur si son PC n'arrive pas à joindre le serveur (problème de connexion = impossibilité de recevoir la clé)
+- [x] Changer la méthode utilisée : la clé privé reste sur le serveur, on ne donne que la clé symétrique déchiffrée
+- [x] Indiquer à l'utilisateur si son PC n'arrive pas à joindre le serveur (problème de connexion = impossibilité de recevoir la clé)
 - [ ] Commenter le code
 - [ ] Changement du Wallpaper
 - [ ] Bypass de Windows Defender
@@ -52,7 +52,7 @@ Ce programme chiffre les fichiers de l'utilisateur avec une clé symétrique chi
 - [ ] Ajout BDD côté serveur avec clés générées, MAC de la victime (requête à récupérer pour l'avoir), date d'infection, + d'autres infos
 - [ ] Automatiser les requêtes entre le serveur et la base (Pour que la base s'update automatiquement à la création des clés, à la récupération de l'adresse MAC et de la date d'infection)
 - [ ] Trouver une solution pour générer l'exécutable pour Windows même si l'on est sous Linux (peut-être avec un conteneur ou wine) --> UPDATE : sous linux on peut utiliser py2exe (sinon il aurait mieux fallu utiliser Go comme langage)
-- [ ] Ajout du timer
+- [x] Ajout du timer
 - [ ] Synchro du temps avec un ntp
 - [ ] Faire en sorte que le client s'autodétruise si la communication avec le serveur ne se fait pas ou au bout des 3 jours ou après le paiement et déchiffrement de tous les fichiers
 - [ ] Faire en sorte qu'il soit très difficilement supprimable d'ici là (Faire peut-être des copies à certains endroits. Screenlocker, persistance, utilisation du registre, chargement du ransomware à la place du bureau)

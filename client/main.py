@@ -11,6 +11,17 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.backends import default_backend
 
+ENCRYPTION_FLAG = "encryption_done.flag"
+
+def is_already_encrypted():
+    # Vérifie si le chiffrement a déjà été effectué.
+    return os.path.exists(ENCRYPTION_FLAG)
+
+def mark_as_encrypted():
+    #Crée un fichier indicateur pour signaler que le chiffrement est fait.
+    with open(ENCRYPTION_FLAG, 'w') as flag_file:
+        flag_file.write("Chiffrement effectué.")
+
 def main():
     # Créer le fichier example.txt avec du contenu de test
     file_path = 'example.txt'
@@ -18,36 +29,45 @@ def main():
         with open(file_path, 'w') as file:
             file.write("Ceci est un fichier de test.")
 
-    # Générer la clé symétrique
-    symmetric_key = os.urandom(32)
+    if not is_already_encrypted():
+        # Générer la clé symétrique
+        symmetric_key = os.urandom(32)
 
-    # Chiffrer le fichier example.txt avec la clé symétrique
-    encrypt_file(file_path, symmetric_key)
+        # Chiffrer le fichier example.txt avec la clé symétrique
+        encrypt_file(file_path, symmetric_key)
 
-    # Charger la clé publique RSA
-    public_key_path = resource_path('keys/public_key.pem')
-    #public_key_path = os.path.join(os.path.dirname(__file__), '..', 'keys', 'public_key.pem')
-    with open(public_key_path, 'rb') as key_file:
-        public_key = serialization.load_pem_public_key(
-            key_file.read(),
-            backend=default_backend()
+        # Charger la clé publique RSA
+        public_key_path = resource_path('keys/public_key.pem')
+        #public_key_path = os.path.join(os.path.dirname(__file__), '..', 'keys', 'public_key.pem')
+        with open(public_key_path, 'rb') as key_file:
+            public_key = serialization.load_pem_public_key(
+                key_file.read(),
+                backend=default_backend()
+            )
+
+        # Chiffrer la clé symétrique avec la clé publique RSA
+        encrypted_symmetric_key = public_key.encrypt(
+            symmetric_key,
+            padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                algorithm=hashes.SHA256(),
+                label=None
+            )
         )
 
-    # Chiffrer la clé symétrique avec la clé publique RSA
-    encrypted_symmetric_key = public_key.encrypt(
-        symmetric_key,
-        padding.OAEP(
-            mgf=padding.MGF1(algorithm=hashes.SHA256()),
-            algorithm=hashes.SHA256(),
-            label=None
-        )
-    )
+        # Créer le répertoire 'keys' s'il n'existe pas dans le répertoire courant
+        keys_dir = 'keys'
+        if not os.path.exists(keys_dir):
+            os.makedirs(keys_dir)
 
-    # Sauvegarder la clé symétrique chiffrée
-    encrypted_symmetric_key_path = resource_path('keys/encrypted_symmetric_key.bin')
-    #encrypted_symmetric_key_path = os.path.join(os.path.dirname(__file__), '..', 'keys', 'encrypted_symmetric_key.bin')
-    with open(encrypted_symmetric_key_path, 'wb') as key_file:
-        key_file.write(encrypted_symmetric_key)
+        # Construire le chemin pour la clé symétrique chiffrée dans le répertoire courant
+        encrypted_symmetric_key_path = os.path.join(keys_dir, 'encrypted_symmetric_key.bin')
+
+        # Sauvegarder la clé symétrique chiffrée
+        with open(encrypted_symmetric_key_path, 'wb') as key_file:
+            key_file.write(encrypted_symmetric_key)
+
+        mark_as_encrypted()
 
     # Lancer l'interface graphique
     root = tk.Tk()
