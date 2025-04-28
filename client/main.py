@@ -18,11 +18,8 @@ def main():
         with open(file_path, 'w') as file:
             file.write("Ceci est un fichier de test.")
 
-    # Charger la clé symétrique
-    symmetric_key_path = resource_path('keys/symmetric_key.bin')
-    #symmetric_key_path = os.path.join(os.path.dirname(__file__), '..', 'keys', 'symmetric_key.bin')
-    with open(symmetric_key_path, 'rb') as key_file:
-        symmetric_key = key_file.read()
+    # Générer la clé symétrique
+    symmetric_key = os.urandom(32)
 
     # Chiffrer le fichier example.txt avec la clé symétrique
     encrypt_file(file_path, symmetric_key)

