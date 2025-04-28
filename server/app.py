@@ -11,7 +11,7 @@ import configparser
 # Ajouter le répertoire parent au chemin de recherche des modules
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
-from utils import resource_path
+from tools.utils import resource_path
 
 app = Flask(__name__)
 
