@@ -85,7 +85,7 @@ def compile_executable():
         '--add-data', 'client:client',  # Inclure tout le répertoire client
         '--add-data', 'tools:tools',
         '--add-data', 'wallpaper:wallpaper',
-        'client/main.py'
+        'client/client.py'
     ],
     stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
@@ -110,7 +110,7 @@ def compile_executable():
 def start_server(server_ip, server_port, local_port):
     # Lancer le serveur
     print(Fore.CYAN + f"Lancement du serveur sur le port local {local_port}...")
-    server_process = subprocess.Popen(['python', 'server/app.py', '--port', str(local_port)])
+    server_process = subprocess.Popen(['python', 'server/server.py', '--port', str(local_port)])
 
     def signal_handler(sig, frame):
         print(Fore.YELLOW + 'Arrêt du serveur...')

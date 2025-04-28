@@ -13,7 +13,7 @@ parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
 from tools.utils import resource_path
 
-app = Flask(__name__)
+server = Flask(__name__)
 
 private_key = load_private_key()
 stop_event = threading.Event()
@@ -32,7 +32,7 @@ def broadcast_server():
         sock.sendto(f"SERVER_IP:{server_ip}".encode(), ('<broadcast>', 5001))
         stop_event.wait(5)  # Envoyer un message toutes les 5 secondes
 
-@app.route('/get_symmetric_key', methods=['POST'])
+@server.route('/get_symmetric_key', methods=['POST'])
 def get_symmetric_key():
     data = request.json
     if data.get('paid') == True:
@@ -63,5 +63,5 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, signal_handler)
     broadcast_thread = threading.Thread(target=broadcast_server)
     broadcast_thread.start()
-    app.run(host='0.0.0.0', port=local_port)
+    server.run(host='0.0.0.0', port=local_port)
     broadcast_thread.join()  # Attendre que le thread de broadcast se termine
