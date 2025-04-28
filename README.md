@@ -46,7 +46,7 @@ Ce programme chiffre les fichiers de l'utilisateur avec une clé symétrique chi
 - [x] Changer la méthode utilisée : la clé privé reste sur le serveur, on ne donne que la clé symétrique déchiffrée
 - [x] Indiquer à l'utilisateur si son PC n'arrive pas à joindre le serveur (problème de connexion = impossibilité de recevoir la clé)
 - [ ] Commenter le code
-- [ ] Changement du Wallpaper
+- [x] Changement du Wallpaper
 - [ ] Bypass de Windows Defender
 - [ ] Persistance en ajoutant le programme aux programmes lancés lors du démarrage
 - [ ] Ajout BDD côté serveur avec clés générées, MAC de la victime (requête à récupérer pour l'avoir), date d'infection, + d'autres infos
