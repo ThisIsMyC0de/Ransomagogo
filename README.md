@@ -51,7 +51,7 @@ Ce programme chiffre les fichiers de l'utilisateur avec une clé symétrique chi
 - [ ] Persistance en ajoutant le programme aux programmes lancés lors du démarrage
 - [ ] Ajout BDD côté serveur avec clés générées, MAC de la victime (requête à récupérer pour l'avoir), date d'infection, + d'autres infos
 - [ ] Automatiser les requêtes entre le serveur et la base (Pour que la base s'update automatiquement à la création des clés, à la récupération de l'adresse MAC et de la date d'infection)
-- [x] Trouver une solution pour générer l'exécutable pour Windows même si l'on est sous Linux (peut-être avec un conteneur ou wine) --> UPDATE : sous linux on peut utiliser py2exe (sinon il aurait mieux fallu utiliser Go comme langage)
+- [x] Trouver une solution pour générer l'exécutable pour Windows même si l'on est sous Linux (peut-être avec un conteneur ou wine)
 - [x] Ajout du timer
 - [ ] Synchro du temps avec un ntp
 - [ ] Faire en sorte que le client s'autodétruise si la communication avec le serveur ne se fait pas ou au bout des 3 jours ou après le paiement et déchiffrement de tous les fichiers
