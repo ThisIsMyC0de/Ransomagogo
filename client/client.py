@@ -2,7 +2,6 @@ import tkinter as tk
 from gui import RansomwareGUI
 import os
 import sys
-import stat
 import ctypes
 # Ajouter le répertoire parent au chemin de recherche des modules
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -83,7 +82,7 @@ def main():
 
     # Lancer l'interface graphique
     root = tk.Tk()
-    app = RansomwareGUI(root)
+    server = RansomwareGUI(root)
     root.mainloop()
 
 if __name__ == "__main__":

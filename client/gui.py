@@ -13,8 +13,6 @@ sys.path.append(parent_dir)
 from tools.utils import resource_path
 import requests
 from decryption import decrypt_file
-import socket
-import threading
 import configparser
 
 # Chemin du dossier caché dans le répertoire de l'utilisateur

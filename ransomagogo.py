@@ -9,7 +9,7 @@ import argparse
 import platform
 from tools.utils import resource_path
 from tqdm import tqdm
-from colorama import Fore, Style, init
+from colorama import Fore, init
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.backends import default_backend
@@ -143,7 +143,7 @@ def compile_executable():
     print(Fore.GREEN + "Compilation terminée !")
     print(Fore.CYAN + "L'exécutable a été généré à l'emplacement suivant : " + Fore.LIGHTMAGENTA_EX + f"{executable_path}")
 
-def start_server(server_ip, server_port, local_port):
+def start_server(local_port):
     # Lancer le serveur
     print(Fore.CYAN + f"Lancement du serveur sur le port local {local_port}...")
     server_process = subprocess.Popen(['python', 'server/server.py', '--port', str(local_port)])
@@ -172,10 +172,11 @@ def main():
     # Charger la configuration
     config = load_config()
 
-    if args.start_server or args.compile or args.generate_keys:
-        # Demander à l'utilisateur l'adresse IP et le numéro de port du serveur pour la connexion client
-        server_ip = input(Fore.CYAN + f"Veuillez entrer l'adresse IP du serveur pour la connexion client [{config['SERVER']['client_ip']}] : ") or config['SERVER']['client_ip']
-        server_port = input(Fore.CYAN + f"Veuillez entrer le numéro de port du serveur pour la connexion client [{config['SERVER']['client_port']}] : ") or config['SERVER']['client_port']
+    if args.start_server or args.compile:
+        if args.compile:
+            # Demander à l'utilisateur l'adresse IP et le numéro de port du serveur pour la connexion client
+            server_ip = input(Fore.CYAN + f"Veuillez entrer l'adresse IP du serveur pour la connexion client [{config['SERVER']['client_ip']}] : ") or config['SERVER']['client_ip']
+            server_port = input(Fore.CYAN + f"Veuillez entrer le numéro de port du serveur pour la connexion client [{config['SERVER']['client_port']}] : ") or config['SERVER']['client_port']
 
         # Demander à l'utilisateur le port local pour le serveur
         local_port = input(Fore.CYAN + f"Veuillez entrer le numéro de port local pour le serveur [{config['SERVER']['local_port']}] : ") or config['SERVER']['local_port']
@@ -196,7 +197,7 @@ def main():
 
     if args.start_server:
         # Lancer le serveur
-        start_server(server_ip, server_port, local_port)
+        start_server(local_port)
 
     if not args.start_server and not args.compile and not args.generate_keys:
         print(Fore.RED + "Veuillez spécifier une option : --start-server, --compile, ou --generate-keys")
