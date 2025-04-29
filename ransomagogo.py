@@ -159,10 +159,10 @@ def start_server(server_ip, server_port, local_port):
     server_process.wait()
 
 def main():
-    parser = argparse.ArgumentParser(description="Outil de gestion de serveur et de compilation.")
-    parser.add_argument('--start-server', action='store_true', help="Lancer uniquement le serveur.")
-    parser.add_argument('--compile', action='store_true', help="Créer uniquement l'exécutable.")
-    parser.add_argument('--generate-keys', action='store_true', help="Générer uniquement une paire de clés RSA.")
+    parser = argparse.ArgumentParser(description="Outil de génération de ransomwares pédagogiques pour Windows")
+    parser.add_argument('--start-server', action='store_true', help="Lancer le serveur")
+    parser.add_argument('--compile', action='store_true', help="Compiler l'exécutable")
+    parser.add_argument('--generate-keys', action='store_true', help="Générer une paire de clés RSA")
 
     args = parser.parse_args()
 
