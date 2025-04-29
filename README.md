@@ -4,11 +4,11 @@
 
 > ⚠️ Important : Ce projet est un ransomware pédagogique destiné à sensibiliser les utilisateurs aux dangers des ransomwares. Nous insistons sur le fait que c'est un outil de prévention à but éducatif et que nous ne serons pas tenus comme responsables de son utilisation à des fins malveillantes.
 
-Ce programme chiffre les fichiers de l'utilisateur avec une clé symétrique chiffrée par une clé publique RSA. Le déchiffrement nécessite l'envoi d'une requête à un serveur distant pour obtenir la clé privée. Cette clé privée est alors utilisée pour déchiffrer la clé symétrique qui permet de récupérer les fichiers chiffrés par le ransomware.
+Ce programme chiffre les fichiers de l'utilisateur avec une clé symétrique AES chiffrée par la suite avec une clé publique RSA. Le déchiffrement nécessite l'envoi d'une requête contenant la clé symétrique chiffrée à un serveur distant qui déchiffre la clé symétrique à l'aide de la clé privée RSA. La clé symétrique déchiffrée est alors renvoyée au client et ce dernier l'utilise pour récupérer les fichiers chiffrés par le ransomware.
 
 ## Installation
 
-> ⚠️ Attention : ces instructions sont valables pour Windows uniquement. En effet, le ransoware ciblant des victimes sous Windows, le code doit être compilé sur le même OS (possibilité d'utiliser une VM si vous êtes sous Linux). Des modifications seront peut-être apportées plus tard pour régler ce problème de manière transparente.
+> ⚠️ Attention : ces instructions sont valables pour Windows uniquement. En effet, le ransoware ciblant des victimes sous Windows, le code doit être compilé sur le même OS (possibilité d'utiliser une VM si vous êtes sous Linux). Sinon veuillez avoir wine d'installé et dans votre path avec python installé dessus et toute les dépendances nécessaires. Vous pourrez alors utiliser python3 sur linux pour lancer le script ransomagogo.py (l'utilisation de wine sera transparente).
 
 > ⚠️ A noter : Pour l'instant le Ransomware est détecté par Windows Defender. Pensez donc bien à désactiver votre antivirus le temps que des modifications soient apportées pour les bypasser.
 
@@ -25,17 +25,15 @@ Ce programme chiffre les fichiers de l'utilisateur avec une clé symétrique chi
 
 1. Lancez le script ransomagogo.py :
    ```bash
-   python ransomagogo.py
+   python ransomagogo.py --generate-key --compile --start-server
 
-2. Suivez les instructions pour modifier l'adresse ip et le port du serveur. 
+2. Suivez les instructions pour modifier l'adresse ip et les ports utilisés. 
 
 3. Récupérez l'exécutable du client généré dans le dossier dist.
 
 4. Lancez le client sur la machine de la victime.
 
-5. Cliquez sur "Afficher le message de rançon" pour voir le message.
-
-6. Cliquez sur "Payer la rançon" pour envoyer une requête au serveur et déchiffrer les fichiers.
+5. Cliquez sur le bouton de déchiffrement des fichiers après avoir coché la case du paiement pour envoyer une requête au serveur et déchiffrer les fichiers.
 
 ## To Do List
 
