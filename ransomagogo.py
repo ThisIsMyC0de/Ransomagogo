@@ -100,7 +100,7 @@ def compile_executable():
         '--add-data', 'client:client',  # Inclure tout le répertoire client
         '--add-data', 'tools:tools',
         '--add-data', 'wallpaper:wallpaper',
-        #'--icon=client/icon.ico',  # Chemin vers l'icône
+        '--icon=client/favicon.ico',  # Chemin vers l'icône
         'client/client.py'
     ]
 
